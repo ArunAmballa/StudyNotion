@@ -6,15 +6,16 @@ require("dotenv").config();
 exports.auth = async (req, res, next) => {
     try{
         //extract token
-        const token = req.cookies.token 
-                        || req.body.token 
+        const token = req.cookies.token
+                        || req.body.token
                         || req.header("Authorisation").replace("Bearer ", "");
 
         //if token missing, then return response
+        console.log(token)
         if(!token) {
             return res.status(401).json({
                 success:false,
-                message:'TOken is missing',
+                message:'Token is missing',
             });
         }
 
@@ -99,4 +100,4 @@ exports.isAdmin = async (req, res, next) => {
            message:'User role cannot be verified, please try again'
        })
     }
-   }
+}

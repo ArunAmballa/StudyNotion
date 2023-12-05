@@ -76,12 +76,12 @@ exports.resetPassword = async (req, res) => {
 			{ password: encryptedPassword },
 			{ new: true }
 		);
-		res.json({
+		res.status(200).json({
 			success: true,
 			message: `Password Reset Successful`,
 		});
 	} catch (error) {
-		return res.json({
+		return res.status(500).json({
 			error: error.message,
 			success: false,
 			message: `Some Error in Updating the Password`,

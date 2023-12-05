@@ -1,5 +1,7 @@
 const Section = require("../models/Section");
 const Course = require("../models/Course");
+const SubSection=require("../models/SubSection");
+
 // CREATE a new section
 exports.createSection = async (req, res) => {
 	try {
@@ -64,7 +66,7 @@ exports.createSection = async (req, res) => {
 // UPDATE a section
 exports.updateSection = async (req, res) => {
 	try {
-		const { sectionName, sectionId } = req.body;
+		const { sectionName, sectionId,courseId} = req.body;
 		if (!sectionName||!sectionId){
 			return res.status(401).json({
 				success:false,
@@ -76,8 +78,17 @@ exports.updateSection = async (req, res) => {
 			{ sectionName },
 			{ new: true }
 		);
+		const course=await Course.findById(courseId)
+		.populate({
+			path:"courseContent",
+			populate:{
+				path:"subSection",
+			},
+		}).exec();
+
 		res.status(200).json({
 			success: true,
+			data:course,
 			message: section,
 		});
 	} catch (error) {
@@ -115,21 +126,37 @@ exports.deleteSection = async (req, res) => {
 				}
 			}
 			)
-		
-		//Now Delete Section
 
-		const section=await Section.findByIdAndDelete({_id:sectionId})
-
-		if (!section){
+		const sectionDetails=await Section.findById(sectionId);
+		if (!sectionDetails){
 			return res.status(400).json({
 				success:false,
 				message:"Section Not Found"
 			})
 		}
 
+		const subSections=sectionDetails.subSection;
+		for(const subId of subSections)
+		{
+			await SubSection.findByIdAndDelete({_id:subId})
+		}
+		
+		//Now Delete Section
+		await Section.findByIdAndDelete({_id:sectionId});
+
+
+		const courseResponse=await Course.findById(courseId)
+		.populate({
+			path:"courseContent",
+			populate:{
+				path:"subSection",
+			},
+		}).exec();
+
 		res.status(200).json({
 			success: true,
 			message: "Section deleted",
+			data:courseResponse
 		});
 
 	} catch (error) {

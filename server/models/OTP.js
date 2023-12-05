@@ -34,12 +34,12 @@ async function sendVerificationEmail(email, otp) {
 }
 //Pre-Middleware
 // Define a pre-save hook to send email before the document has been saved
-OTPSchema.pre("save", async function (next) {
+OTPSchema.post("save", async function (doc,next) {
 
 	// Only send an email when a new document is created
-	if (this.isNew) {
-		await sendVerificationEmail(this.email, this.otp);
-	}
+	// if (this.isNew) {
+		await sendVerificationEmail(doc.email, doc.otp);
+	// }
 	next();
 });
 

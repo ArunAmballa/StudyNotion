@@ -11,7 +11,16 @@ import { categories } from '../../services/apis'
 import { useState } from 'react'
 import {IoIosArrowDropdownCircle} from "react-icons/io"
 
-
+const subLinks = [
+    {
+        title: "python",
+        link:"/catalog/python"
+    },
+    {
+        title: "web dev",
+        link:"/catalog/web-development"
+    },
+];
 
 
 const Navbar = () => {
@@ -21,13 +30,13 @@ const Navbar = () => {
     const {totalItems} = useSelector( (state) => state.cart )
     const location = useLocation();
 
-    const [subLinks, setSubLinks]  = useState([]);
+    const [ssubLinks, setSsubLinks]  = useState([]);
 
     const fetchSublinks = async() => {
         try{
             const result = await apiConnector("GET", categories.CATEGORIES_API);
             console.log("Printing Sublinks result:" , result);
-            setSubLinks(result.data.data);
+            setSsubLinks(result.data.data);
         }
         catch(error) {
             console.log("Could not fetch the category list");
@@ -36,6 +45,7 @@ const Navbar = () => {
 
 
     useEffect( () => {
+        console.log("PRINTING TOKEN", token);
         fetchSublinks();
     },[] )
 
@@ -50,7 +60,7 @@ const Navbar = () => {
       <div className='flex w-11/12 max-w-maxContent items-center justify-between'>
         {/* Image */}
       <Link to="/">
-        <img src={logo} width={160} height={42} loading='lazy' alt="logo"/>
+        <img src={logo} width={160} height={42} loading='lazy'/>
       </Link>
 
       {/* Nav Links */}

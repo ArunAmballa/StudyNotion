@@ -229,10 +229,12 @@ exports.sendotp = async (req, res) => {
 exports.changePassword = async (req, res) => {
 	try {
 		// Get user data from req.user
-		const userDetails = await User.findById(req.user.id);
+		// console.log(req.user.email)
+		const email=req.user.email
+		const userDetails = await User.findOne({email});
 
 		// Get old password, new password, and confirm new password from req.body
-		const { oldPassword, newPassword, confirmNewPassword } = req.body;
+		const { oldPassword, newPassword} = req.body;
 
 		// Validate old password
 		const isPasswordMatch = await bcrypt.compare(
@@ -246,14 +248,6 @@ exports.changePassword = async (req, res) => {
 				.json({ success: false, message: "The password is incorrect" });
 		}
 
-		// Match new password and confirm new password
-		if (newPassword !== confirmNewPassword) {
-			// If new password and confirm new password do not match, return a 400 (Bad Request) error
-			return res.status(400).json({
-				success: false,
-				message: "The password and confirm password does not match",
-			});
-		}
 
 		// Update password
 		const encryptedPassword = await bcrypt.hash(newPassword, 10);
